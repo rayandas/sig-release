@@ -749,7 +749,7 @@ git remote set-url --push upstream no_push
 
 24 hours before the release, freeze the [k/website](https://github.com/kubernetes/website) repo: ⚠️  no PRs should be allowed to merge **AT ALL** until the release PR has successfully merged. There is an exception for your release PRs, which will bypass that restriction.
 
-- Submit an issue with `tide/merge-blocker` label. Depending upon your permissions, a [SIG Docs chair](https://github.com/kubernetes/community/tree/master/sig-docs#leadership) can assist you with adding the label. You may need to add the label manually by selecting the gear icon in the labels section on the left-hand side of the issue after you have opened it, rather than using a `tide` command.
+- Submit [an issue](https://github.com/kubernetes/website/issues/50587) with `tide/merge-blocker` label. Depending upon your permissions, a [SIG Docs chair](https://github.com/kubernetes/community/tree/master/sig-docs#leadership) can assist you with adding the label. You may need to add the label manually by selecting the gear icon in the labels section on the left-hand side of the issue after you have opened it, rather than using a `tide` command.
 
 - Submit a freeze announcement following our [protocols](#communicate-major-deadlines) to #sig-docs and #kubernetes-contributors
 
@@ -876,6 +876,7 @@ a notification of the release to the Kubernetes Dev mailing list.
 ```shell
 git clone https://github.com/kubernetes/website/
 cd website
+git remote add upstream git@github.com:kubernetes/website.git
 git checkout main
 ```
 ```
@@ -901,11 +902,16 @@ Date:   Wed Apr 7 07:53:53 2021 -0700
     
     [ja] updated labels for cli command in the PHP Guestbook tutorial
 ```
-Proceed with tagging the commit hashes:
+
+You have to enable `--push` in upstream, else you won't be able to push the tags to upstream.
+```shell
+git remote set-url --push upstream git@github.com:kubernetes/website.git
+```
+Now proceed with tagging the commit hashes:
 ```shell
 git tag -a snapshot-final-v1.20 6d252624b -m "Release 1.20 final snapshot"
 git tag -a snapshot-initial-v1.21 969a3db92 -m "Release 1.21 initial snapshot"
-git push --tags origin main
+git push --tags upstream main
 ```
 
 After creating the tags, you can create a release based off of a tag very easily. Follow the naming conventions as done before and update: https://github.com/kubernetes/website/releases
@@ -953,7 +959,7 @@ These steps should be done after the launch. They require approximately 4 hours 
 git clone https://github.com/kubernetes/website.git
 git checkout -b dev-1.22
 git commit --allow-empty -m "Tracking commit for v1.22 docs"
-git push -u origin dev-1.22
+git push -u upstream dev-1.22
 ```
 
 ### Modify prow config file
